@@ -5,17 +5,17 @@ import streamlit as st
 import plotly.express as px
 from groq import Groq
 
-# Carregar variáveis de ambiente do arquivo .env
+
 load_dotenv()
 
-# Configuração do cliente Groq
+# cliente Groq
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY"),
 )
 
 # Função para gerar insights e gráficos com Groq
 def generate_insights_and_graphs(dataframe):
-    # Ajustar o prompt para indicar que a planilha já foi carregada
+    # Esse prompt pode ser ajustado de acordo com qualquer necessidade mais especifica...alterando isso vc deixa a analise melhor!!
     prompt = (
         "Você recebeu uma planilha com os seguintes dados: {data_description}. "
         "A análise deve ser feita com base nesses dados já carregados. "
@@ -35,10 +35,10 @@ def generate_insights_and_graphs(dataframe):
     insights = response.choices[0].message.content
     return insights
 
-# Título do aplicativo
-st.title("Análise Dinâmica de Desempenho de Atendentes com Groq")
+# Título
+st.title("Análise Dinâmica de planilhas usando LlAMA 3.1")
 
-# Upload da planilha
+
 uploaded_file = st.file_uploader("Escolha o arquivo para análise", type=["xlsx", "xls", "csv"])
 
 if uploaded_file:
@@ -46,31 +46,31 @@ if uploaded_file:
     if uploaded_file.name.endswith(".csv"):
         df = pd.read_csv(uploaded_file)
     elif uploaded_file.name.endswith(".xlsx"):
-        df = pd.read_excel(uploaded_file, engine='openpyxl')  # Especificar engine para .xlsx
+        df = pd.read_excel(uploaded_file, engine='openpyxl')  # arquivo .xlsx
     elif uploaded_file.name.endswith(".xls"):
-        df = pd.read_excel(uploaded_file, engine='xlrd')  # Especificar engine para .xls
+        df = pd.read_excel(uploaded_file, engine='xlrd')  # arquivo .xls
     else:
         st.error("Formato de arquivo não suportado.")
         df = None
 
     if df is not None:
-        # Gerar insights e gráficos usando a API da Groq
+        # aqui é para gerar insights e gráficos usando a API da Groq
         insights = generate_insights_and_graphs(df)
         
         # Exibir insights
         st.subheader("Insights Gerados pela Groq")
         st.write(insights)
 
-        # Adicionar uma opção para o usuário escolher como visualizar os dados
+        
         st.write("Escolha como visualizar os dados:")
         grafico_selecionado = st.selectbox("Escolha o gráfico", ["Nenhum", "Gráfico Sugerido 1", "Gráfico Sugerido 2"])
 
-        # Exibir o gráfico sugerido com base na análise da Groq (exemplo)
+        # Aqui é pra gerar o grafico sugerido ( nem sempre fica muito bom hehe)
         if grafico_selecionado == "Gráfico Sugerido 1":
-            fig = px.bar(df, x=df.columns[0], y=df.columns[1])  # Exemplo de gráfico sugerido
+            fig = px.bar(df, x=df.columns[0], y=df.columns[1])  
             st.plotly_chart(fig)
         elif grafico_selecionado == "Gráfico Sugerido 2":
-            fig = px.line(df, x=df.columns[0], y=df.columns[1])  # Exemplo de gráfico sugerido
+            fig = px.line(df, x=df.columns[0], y=df.columns[1])  
             st.plotly_chart(fig)
 
 else:
